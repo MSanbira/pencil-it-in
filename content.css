@@ -1,0 +1,14 @@
+/* Content styles - injected into every page */
+#extension-message {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  z-index: 10000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
