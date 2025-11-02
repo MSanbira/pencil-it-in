@@ -1,38 +1,43 @@
-// TODO - move the pencil to the current place in the input
-
 const pencil = document.createElement("div");
 pencil.classList.add("PENI-pencil");
-pencil.classList.add("test");
 document.body.appendChild(pencil);
 
-const animationTime = 500;
+const inputCopy = document.createElement("div");
+inputCopy.classList.add("PENI-input-copy");
+document.body.appendChild(inputCopy);
+
+const animationTime = 400;
 
 let isWriting = false;
 let isErasing = false;
 let isTransitioning = false;
-let transitioningDebunce = null;
-let erasingDebunce = null;
-let eraseDebunce = null;
+let transitioningDebounce = null;
+let erasingDebounce = null;
+let eraseDebounce = null;
+let hideDebounce = null;
+
+let pencilBaseLeft = 0;
+let pencilBaseBottom = 0;
 
 pencil.addEventListener("mouseenter", () => {
-  console.log("Mouse enter");
-  hidePencil();
+  hideDebounce = setTimeout(() => hidePencil(), 1000);
+});
+
+pencil.addEventListener("mouseleave", () => {
+  clearTimeout(hideDebounce);
 });
 
 document.addEventListener("scroll", () => {
-  console.log("Scroll");
   hidePencil();
 });
 
 document.addEventListener("focusout", (e) => {
-  console.log("Focus out");
-  if (e.target.tagName === "INPUT") return;
+  if (e.relatedTarget?.tagName === "INPUT") return;
 
   hidePencil();
 });
 
 document.addEventListener("focusin", (e) => {
-  console.log("Focus in");
   const target = e.target;
 
   if (target.tagName === "INPUT") {
@@ -43,8 +48,18 @@ document.addEventListener("focusin", (e) => {
   }
 });
 
+document.addEventListener("selectionchange", () => {
+  const activeElement = document.activeElement;
+  if (activeElement && activeElement.tagName === "INPUT") {
+    positionPencilLeft(activeElement);
+  }
+});
+
 document.addEventListener("keydown", (e) => {
   const isEraseMode = ["Backspace", "Delete"].includes(e.key);
+  const isWriteMode = e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+  if (!isWriteMode && !isEraseMode) return;
+
   let delay = 0;
 
   if (isEraseMode) {
@@ -61,8 +76,8 @@ document.addEventListener("keydown", (e) => {
     delay = animationTime;
     pencil.classList.remove("eraseing");
     pencil.classList.remove("erase");
-    clearTimeout(eraseDebunce);
-    erasingDebunce = null;
+    clearTimeout(eraseDebounce);
+    erasingDebounce = null;
   }
 
   setTimeout(write, delay);
@@ -85,10 +100,7 @@ const erase = () => {
   if (!pencil.classList.contains("eraseing")) {
     setTransitioning();
     pencil.classList.add("eraseing");
-    eraseDebunce = setTimeout(
-      () => pencil.classList.add("erase"),
-      animationTime
-    );
+    eraseDebounce = setTimeout(() => pencil.classList.add("erase"), animationTime);
     setTimeout(() => {
       pencil.classList.remove("erase");
       isErasing = false;
@@ -101,20 +113,17 @@ const erase = () => {
     }, animationTime);
   }
 
-  clearTimeout(erasingDebunce);
-  erasingDebunce = setTimeout(() => {
+  clearTimeout(erasingDebounce);
+  erasingDebounce = setTimeout(() => {
     pencil.classList.remove("eraseing");
-    erasingDebunce = null;
+    erasingDebounce = null;
   }, 2000);
 };
 
 const setTransitioning = () => {
-  clearTimeout(transitioningDebunce);
+  clearTimeout(transitioningDebounce);
   isTransitioning = true;
-  transitioningDebunce = setTimeout(
-    () => (isTransitioning = false),
-    animationTime
-  );
+  transitioningDebounce = setTimeout(() => (isTransitioning = false), animationTime);
 };
 
 const hidePencil = () => {
@@ -131,16 +140,50 @@ const showPencil = () => {
   }, 0);
 };
 
+const getCursorOffset = (inputElement) => {
+  if (!inputElement) return 0;
+
+  const cursorPosition = inputElement.selectionStart || 0;
+  const textBeforeCursor = (inputElement.value || "").substring(0, cursorPosition);
+
+  const computedStyle = window.getComputedStyle(inputElement);
+  inputCopy.style.setProperty("--PENI-input-max-width", inputElement.offsetWidth + "px");
+  inputCopy.style.setProperty("--PENI-input-font-size", computedStyle.fontSize);
+  inputCopy.style.setProperty("--PENI-input-font-family", computedStyle.fontFamily);
+  inputCopy.style.setProperty("--PENI-input-font-weight", computedStyle.fontWeight);
+  inputCopy.style.setProperty("--PENI-input-letter-spacing", computedStyle.letterSpacing);
+  inputCopy.style.setProperty("--PENI-input-line-height", computedStyle.lineHeight);
+  inputCopy.style.setProperty("--PENI-input-padding", computedStyle.padding);
+
+  inputCopy.innerText = textBeforeCursor;
+
+  const textWidth = inputCopy.offsetWidth;
+  const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
+
+  return textWidth - paddingRight;
+};
+
+const positionPencilLeft = (inputElement) => {
+  if (!inputElement) return;
+
+  const cursorOffset = getCursorOffset(inputElement);
+
+  pencil.style.setProperty("--PENI-left", `${pencilBaseLeft + cursorOffset}px`);
+};
+
 const positionPencilToInput = (inputElement) => {
   if (!inputElement) return;
 
   const rect = inputElement.getBoundingClientRect();
-  const pencilSize =
-    parseFloat(getComputedStyle(pencil).getPropertyValue("--PENI-size")) || 300;
+  const computedStyle = window.getComputedStyle(inputElement);
+  const inputHeight = inputElement.offsetHeight;
+  const paddingTop = parseFloat(computedStyle.paddingTop) || 0;
+  const paddingBottom = parseFloat(computedStyle.paddingBottom) || 0;
+  const boxHeight = inputHeight - paddingTop - paddingBottom;
 
-  const left = rect.left;
-  const bottom = window.innerHeight - rect.top;
+  pencilBaseLeft = rect.left;
+  pencilBaseBottom = window.innerHeight - rect.bottom + paddingBottom + boxHeight / 2;
 
-  pencil.style.setProperty("--PENI-left", `${left}px`);
-  pencil.style.setProperty("--PENI-bottom", `${bottom}px`);
+  pencil.style.setProperty("--PENI-left", `${pencilBaseLeft}px`);
+  pencil.style.setProperty("--PENI-bottom", `${pencilBaseBottom}px`);
 };
