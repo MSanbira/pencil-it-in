@@ -57,7 +57,7 @@ document.addEventListener("selectionchange", () => {
 
 document.addEventListener("keydown", (e) => {
   const isEraseMode = ["Backspace", "Delete"].includes(e.key);
-  const isWriteMode = e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+  const isWriteMode = e.key?.length === 1 && e.key !== " " && !e.ctrlKey && !e.metaKey && !e.altKey;
   if (!isWriteMode && !isEraseMode) return;
 
   let delay = 0;

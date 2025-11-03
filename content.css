@@ -15,6 +15,8 @@
   z-index: -69;
   visibility: hidden;
   left: 200vmax;
+  white-space: pre;
+
   height: var(--PENI-input-height, 1.2em);
   max-width: var(--PENI-input-max-width);
   padding: var(--PENI-input-padding, 0);
@@ -23,6 +25,12 @@
   font-weight: var(--PENI-input-font-weight, normal);
   letter-spacing: var(--PENI-input-letter-spacing, 0);
   line-height: var(--PENI-input-line-height, 1.2);
+
+  /* for debugging */
+  /* background: green;
+  visibility: visible;
+  left: 50px;
+  bottom: 50px; */
 }
 
 .PENI-pencil {
@@ -36,11 +44,11 @@
   position: fixed;
   left: var(--PENI-left);
   bottom: var(--PENI-bottom);
-  z-index: 420;
+  z-index: 5555;
 
   height: var(--PENI-size);
   width: var(--PENI-size);
-  filter: blur(1px)
+  filter: blur(.5px)
     drop-shadow(
       calc(var(--PENI-su) * var(--PENI-shadow-offset)) calc(var(--PENI-su) * var(--PENI-shadow-offset))
         calc(var(--PENI-su) * var(--PENI-shadow-distance)) #0005
@@ -130,21 +138,21 @@
   }
 
   25% {
-    translate: -2% 2%;
+    translate: -4% 1%;
     --PENI-shadow-distance: 2;
-    rotate: 2deg;
+    rotate: -2deg;
   }
 
   50% {
-    translate: -2% -2%;
+    translate: -3% -2%;
     --PENI-shadow-distance: 2;
-    rotate: 4deg;
+    rotate: -4deg;
   }
 
   75% {
-    translate: 0 2%;
+    translate: -2% 1%;
     --PENI-shadow-distance: 2;
-    rotate: 2deg;
+    rotate: -2deg;
   }
 }
 
