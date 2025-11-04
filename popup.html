@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pencil it in</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Pencil it in ✏️</h1>
+    <div class="controls">
+      <label for="isColored">
+        Colored pencil
+        <input type="checkbox" id="isColored" />
+      </label>
+      <label for="hue">Hue</label>
+      <input type="range" id="hue" min="0" max="360" />
+
+      <label>Size</label>
+      <label for="small">
+        <input type="radio" id="small" name="size" value="small" />
+        Small
+      </label>
+      <label for="large">
+        <input type="radio" id="large" name="size" value="large" />
+        Large
+      </label>
+      <label for="comicallyLarge">
+        <input type="radio" id="comicallyLarge" name="size" value="comicallyLarge" />
+        Comically Large
+      </label>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

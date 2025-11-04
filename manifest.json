@@ -3,6 +3,15 @@
   "name": "Pencil it in",
   "version": "1.0.0",
   "description": "A Cartoon pencil UI to help you have fun when you are filling out forms",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Pencil it in",
+    "default_icon": "pencil-it-in-icon.png"
+  },
+  "icons": {
+    "128": "pencil-it-in-icon.png"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

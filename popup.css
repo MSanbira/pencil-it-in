@@ -1,0 +1,46 @@
+
+:root {
+  --background-color: #fff;
+  --accent-color: rebeccapurple;
+  --font-color: #000;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--background-color);
+  color: var(--font-color);
+}
+
+h1 {
+  margin: 0;
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  & input {
+    accent-color: var(--accent-color);
+  }
+}
+
+label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #333;
+    --font-color: #fff;
+  }
+}
+  

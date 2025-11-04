@@ -6,6 +6,44 @@ const inputCopy = document.createElement("div");
 inputCopy.classList.add("PENI-input-copy");
 document.body.appendChild(inputCopy);
 
+const defaultOptions = {
+  isColored: false,
+  hue: 45,
+  size: "large",
+};
+
+const applyOptions = (options) => {
+  if (options.isColored) {
+    pencil.style.setProperty("--PENI-hue", options.hue);
+  } else {
+    pencil.style.removeProperty("--PENI-hue");
+  }
+
+  pencil.setAttribute("size", options.size);
+};
+
+const options = {...defaultOptions};
+(async () => {
+  Object.assign(options, await chrome.storage.sync.get(defaultOptions));
+  applyOptions(options);
+})();
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === "sync") {
+    if (changes.isColored) {
+      Object.assign(options, { isColored: changes.isColored.newValue });
+    }
+    if (changes.hue) {
+      Object.assign(options, { hue: changes.hue.newValue });
+    }
+    if (changes.size) {
+      Object.assign(options, { size: changes.size.newValue });
+    }
+
+    applyOptions(options);
+  }
+});
+
 const animationTime = 400;
 
 let isWriting = false;
@@ -32,7 +70,7 @@ document.addEventListener("scroll", () => {
 });
 
 document.addEventListener("focusout", (e) => {
-  if (e.relatedTarget?.tagName === "INPUT") return;
+  if (isTextInput(e.relatedTarget)) return;
 
   hidePencil();
 });
@@ -40,7 +78,7 @@ document.addEventListener("focusout", (e) => {
 document.addEventListener("focusin", (e) => {
   const target = e.target;
 
-  if (target.tagName === "INPUT") {
+  if (isTextInput(target)) {
     positionPencilToInput(target);
     showPencil();
   } else {
@@ -50,7 +88,7 @@ document.addEventListener("focusin", (e) => {
 
 document.addEventListener("selectionchange", () => {
   const activeElement = document.activeElement;
-  if (activeElement && activeElement.tagName === "INPUT") {
+  if (isTextInput(activeElement)) {
     positionPencilLeft(activeElement);
   }
 });
@@ -82,6 +120,8 @@ document.addEventListener("keydown", (e) => {
 
   setTimeout(write, delay);
 });
+
+const isTextInput = (target) => target && target.tagName === "INPUT" && target.type === "text";
 
 const write = () => {
   if (isWriting) return;
@@ -143,7 +183,7 @@ const showPencil = () => {
 const getCursorOffset = (inputElement) => {
   if (!inputElement) return 0;
 
-  const cursorPosition = inputElement.selectionStart || 0;
+  const cursorPosition = inputElement.selectionEnd || 0;
   const textBeforeCursor = (inputElement.value || "").substring(0, cursorPosition);
 
   const computedStyle = window.getComputedStyle(inputElement);
