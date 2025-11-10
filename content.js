@@ -1,5 +1,6 @@
 const pencil = document.createElement("div");
 pencil.classList.add("PENI-pencil");
+pencil.classList.add("hide");
 document.body.appendChild(pencil);
 
 const inputCopy = document.createElement("div");
@@ -121,7 +122,10 @@ document.addEventListener("keydown", (e) => {
   setTimeout(write, delay);
 });
 
-const isTextInput = (target) => target && target.tagName === "INPUT" && target.type === "text";
+const isTextInput = (target) => {
+  const validTypes = ["text", "number", "password", "email", "tel", "url"];
+  return target && target.tagName === "INPUT" && validTypes.includes(target.type);
+};
 
 const write = () => {
   if (isWriting) return;

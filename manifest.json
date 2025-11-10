@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Pencil it in",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Cartoon pencil UI to help you have fun when you are filling out forms",
   "permissions": ["storage"],
   "action": {
