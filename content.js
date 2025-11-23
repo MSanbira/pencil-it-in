@@ -13,6 +13,8 @@ const defaultOptions = {
   size: "large",
 };
 
+const validTypes = ["text", "number", "password", "email", "tel", "url"];
+
 const applyOptions = (options) => {
   if (options.isColored) {
     pencil.style.setProperty("--PENI-hue", options.hue);
@@ -23,7 +25,7 @@ const applyOptions = (options) => {
   pencil.setAttribute("size", options.size);
 };
 
-const options = {...defaultOptions};
+const options = { ...defaultOptions };
 (async () => {
   Object.assign(options, await chrome.storage.sync.get(defaultOptions));
   applyOptions(options);
@@ -123,8 +125,10 @@ document.addEventListener("keydown", (e) => {
 });
 
 const isTextInput = (target) => {
-  const validTypes = ["text", "number", "password", "email", "tel", "url"];
-  return target && target.tagName === "INPUT" && validTypes.includes(target.type);
+  if (!target) return false;
+
+  const isHidden = window.getComputedStyle(target).visibility === "hidden";
+  return !isHidden && target.tagName === "INPUT" && validTypes.includes(target.type);
 };
 
 const write = () => {
@@ -201,10 +205,12 @@ const getCursorOffset = (inputElement) => {
 
   inputCopy.innerText = textBeforeCursor;
 
-  const textWidth = inputCopy.offsetWidth;
   const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
+  const textWidth = inputCopy.offsetWidth;
+  const textScrollWidth = inputCopy.scrollWidth;
+  const scrollWidthOffset = inputElement.scrollLeft || paddingRight;
 
-  return textWidth - paddingRight;
+  return Math.min(textScrollWidth - scrollWidthOffset, textWidth - paddingRight);
 };
 
 const positionPencilLeft = (inputElement) => {

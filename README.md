@@ -24,6 +24,20 @@ A fun Chrome extension that adds an animated cartoon pencil that follows your cu
 
 The extension injects CSS and JavaScript into every page. When you focus on a text input, an animated pencil appears and tracks your cursor position in real-time using the `selectionchange` event and text measurement techniques.
 
+## Changelog
+
+### Version 1.0.2
+- **Fixed**: Improved cursor position tracking for horizontally scrolled inputs
+- **Fixed**: Added scroll offset calculation using `scrollLeft` property
+- **Fixed**: Enhanced visibility detection to filter out hidden inputs
+- **Improved**: Better handling of text width and scroll width calculations
+
+### Version 1.0.1
+- Initial release improvements
+
+### Version 1.0.0
+- Initial release
+
 ## Privacy Policy
 
 **Pencil it in does not collect, store, or transmit any user data.**
